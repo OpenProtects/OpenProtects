@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>护云 (Protects) | 未来实验室 2026</title>
+    <meta name="description" content="护云实验室 - 连接原子与比特的未知边界。网络科技、数学、生化、物理与AI的融合研究。">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg: '#030712', // Darker, richer black
+                        surface: '#0f172a',
+                        primary: '#6366f1', // Indigo
+                        accent: '#06b6d4', // Cyan
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', 'sans-serif'],
+                        display: ['"Space Grotesk"', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --mouse-x: 0px;
+            --mouse-y: 0px;
+        }
+
+        body {
+            background-color: #030712;
+            color: #f8fafc;
+            font-family: 'Noto Sans SC', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Noise Texture Overlay */
+        .noise-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.03;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Modern Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+
+        /* Spotlight Card Effect */
+        .spotlight-card {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .spotlight-card::before {
+            content: "";
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(
+                800px circle at var(--mouse-x) var(--mouse-y),
+                rgba(255, 255, 255, 0.06),
+                transparent 40%
+            );
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .spotlight-card:hover::before {
+            opacity: 1;
+        }
+        
+        .spotlight-card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .text-gradient-accent {
+            background: linear-gradient(135deg, #22d3ee 0%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Navigation Pill */
+        .nav-pill {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Glow blobs */
+        .glow-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.4;
+            animation: pulse 8s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+
+        .grid-bg {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="selection:bg-cyan-500/30 selection:text-cyan-200">
+
+    <div class="noise-bg"></div>
+
+    <!-- Background Glows -->
+    <div class="fixed top-0 left-1/4 w-96 h-96 bg-blue-900/30 glow-blob" style="top: -100px; left: 20%;"></div>
+    <div class="fixed bottom-0 right-0 w-[500px] h-[500px] bg-indigo-900/20 glow-blob" style="bottom: -100px; right: -100px;"></div>
+
+    <!-- Navigation -->
+    <div class="fixed top-6 left-0 w-full z-50 flex justify-center px-4">
+        <nav class="nav-pill rounded-full px-6 py-3 flex items-center justify-between gap-8 md:gap-12 transition-all duration-300">
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-2 group">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white text-xs shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-atom"></i>
+                </div>
+                <span class="font-display font-bold text-lg tracking-tight text-white hidden sm:block">护云<span class="text-cyan-400">Protects</span></span>
+            </a>
+
+            <!-- Desktop Links -->
+            <div class="hidden md:flex items-center gap-1">
+                <a href="#research" class="px-4 py-2 text-sm text-gray-400 hover:text-white rounded-full hover:bg-white/5 transition-all">科研</a>
+                <a href="#services" class="px-4 py-2 text-sm text-gray-400 hover:text-white rounded-full hover:bg-white/5 transition-all">商业</a>
+                <a href="#about" class="px-4 py-2 text-sm text-gray-400 hover:text-white rounded-full hover:bg-white/5 transition-all">关于</a>
+            </div>
+
+            <!-- CTA -->
+            <a href="#contact" class="bg-white text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-cyan-400 transition-colors shadow-lg shadow-white/10">
+                联系我们
+            </a>
+        </nav>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex flex-col items-center justify-center pt-20 overflow-hidden grid-bg">
+        <div class="relative z-10 text-center px-4 max-w-5xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-3 py-1 mb-8 rounded-full border border-cyan-500/20 bg-cyan-900/10 text-cyan-400 text-xs font-mono tracking-wider">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                EST. 2026 - PROTECTS LAB
+            </div>
+            
+            <h1 class="text-6xl md:text-8xl lg:text-9xl font-display font-bold tracking-tighter mb-6 leading-[0.9]">
+                <span class="text-gradient">连接原子</span><br>
+                <span class="text-gradient-accent">与比特的边界</span>
+            </h1>
+            
+            <p class="mt-8 max-w-2xl mx-auto text-lg md:text-xl text-gray-400 leading-relaxed font-light">
+                一家集网络科技、数学、生化、物理与 AI 于一体的综合前沿实验室。<br class="hidden md:block">
+                我们正在重新定义计算与物质的交互方式。
+            </p>
+
+            <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-6">
+                <button onclick="document.getElementById('research').scrollIntoView()" class="group relative px-8 py-4 bg-white text-black rounded-full font-bold text-lg overflow-hidden transition-all hover:scale-105">
+                    <span class="relative z-10">探索科研领域</span>
+                    <div class="absolute inset-0 bg-cyan-400 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
+                </button>
+                <a href="https://github.com/black-fruit" target="_blank" class="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+                    <i class="fa-brands fa-github text-xl"></i>
+                    <span class="border-b border-transparent hover:border-white">GitHub @black-fruit</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Decorative Code Elements -->
+        <div class="absolute left-10 top-1/3 font-mono text-xs text-slate-700 hidden lg:block select-none opacity-50">
+            01010011 01011001<br>
+            01010011 01010100<br>
+            01000101 01001101<br>
+            INITIALIZED...
+        </div>
+    </section>
+
+    <!-- Bento Grid Research Section -->
+    <section id="research" class="py-24 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+                <div>
+                    <h2 class="text-4xl md:text-5xl font-display font-bold text-white mb-2">核心研究矩阵</h2>
+                    <p class="text-gray-400">跨越学科壁垒的融合创新</p>
+                </div>
+                <div class="flex items-center gap-2 text-sm text-gray-500 font-mono">
+                    <span class="w-20 h-[1px] bg-gray-700"></span>
+                    SCIENTIFIC DOMAINS
+                </div>
+            </div>
+
+            <!-- Bento Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[250px]">
+                
+                <!-- AI (Large Item) -->
+                <div class="spotlight-card rounded-3xl p-8 col-span-1 md:col-span-2 row-span-1 md:row-span-2 flex flex-col justify-between group cursor-default">
+                    <div class="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center border border-purple-500/20 text-purple-400 mb-4">
+                        <i class="fa-solid fa-brain text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-3xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors">人工智能 (A.I.)</h3>
+                        <p class="text-gray-400 leading-relaxed max-w-lg">
+                            从深度强化学习到生成式模型，我们不仅训练算法，更赋予其科学探索的能力。我们的 AI 系统已在蛋白质折叠和高能粒子轨迹分析中取得突破。
+                        </p>
+                    </div>
+                    <div class="absolute right-8 top-8 opacity-0 group-hover:opacity-20 transition-opacity transform scale-150">
+                        <i class="fa-solid fa-microchip text-9xl text-white"></i>
+                    </div>
+                </div>
+
+                <!-- Math -->
+                <div class="spotlight-card rounded-3xl p-8 flex flex-col justify-between group">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20 text-blue-400">
+                        <i class="fa-solid fa-square-root-variable text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-1">纯数学研究</h3>
+                        <p class="text-sm text-gray-400">拓扑数据分析与复杂系统建模。</p>
+                    </div>
+                </div>
+
+                <!-- BioChem -->
+                <div class="spotlight-card rounded-3xl p-8 flex flex-col justify-between group">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-emerald-400">
+                        <i class="fa-solid fa-dna text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-1">生化与分子</h3>
+                        <p class="text-sm text-gray-400">计算机辅助药物设计 (CADD)。</p>
+                    </div>
+                </div>
+
+                <!-- High Energy Physics -->
+                <div class="spotlight-card rounded-3xl p-8 flex flex-col justify-between group">
+                    <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20 text-orange-400">
+                        <i class="fa-solid fa-atom text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-1">高能物理</h3>
+                        <p class="text-sm text-gray-400">量子场论与粒子对撞数据分析。</p>
+                    </div>
+                </div>
+
+                <!-- Network -->
+                <div class="spotlight-card rounded-3xl p-8 md:col-span-2 flex flex-row items-center justify-between group">
+                    <div class="flex flex-col justify-between h-full">
+                        <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20 text-cyan-400 mb-4">
+                            <i class="fa-solid fa-network-wired text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-1">下一代网络技术</h3>
+                            <p class="text-sm text-gray-400 max-w-xs">分布式架构、Web3 协议与高并发系统工程。</p>
+                        </div>
+                    </div>
+                    <div class="hidden sm:block text-8xl opacity-5 font-mono text-white">WEB3</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section (Split Layout) -->
+    <section id="services" class="py-24 relative bg-black/40 border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-16 text-center">
+                <span class="text-xs font-bold tracking-[0.2em] text-cyan-500 uppercase">Commercial Services</span>
+                <h2 class="text-4xl md:text-5xl font-display font-bold text-white mt-2">商业解决方案</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Service 1 -->
+                <div class="group relative rounded-3xl overflow-hidden border border-white/5 bg-surface/50 hover:border-emerald-500/50 transition-colors duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/90 z-10"></div>
+                    <img src="https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700 ease-out" alt="Chemistry">
+                    
+                    <div class="relative z-20 p-10 h-[400px] flex flex-col justify-end">
+                        <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                            <div class="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center mb-4 text-black text-xl">
+                                <i class="fa-solid fa-flask"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold text-white mb-2">高端化学品定制</h3>
+                            <p class="text-gray-300 mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                                提供毫克级至千克级的定制合成。支持 HPLC/MS 图谱验证，专注于稀有试剂与药物中间体研发。
+                            </p>
+                            <button onclick="openModal('chemical')" class="text-emerald-400 font-bold hover:text-white flex items-center gap-2 transition-colors">
+                                咨询详情 <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="group relative rounded-3xl overflow-hidden border border-white/5 bg-surface/50 hover:border-blue-500/50 transition-colors duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/90 z-10"></div>
+                    <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700 ease-out" alt="Code">
+                    
+                    <div class="relative z-20 p-10 h-[400px] flex flex-col justify-end">
+                        <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                            <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mb-4 text-white text-xl">
+                                <i class="fa-solid fa-code"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold text-white mb-2">软件全栈开发</h3>
+                            <p class="text-gray-300 mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                                专家级外包服务。涵盖 Python/Go 后端、React 前端及 AI 模型微调。为科研与企业打造高并发系统。
+                            </p>
+                            <button onclick="openModal('software')" class="text-blue-400 font-bold hover:text-white flex items-center gap-2 transition-colors">
+                                咨询详情 <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / Contact Minimalist -->
+    <section id="contact" class="py-20 border-t border-white/5 bg-black">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="text-3xl font-display font-bold text-white mb-8">Ready to Collaborate?</h2>
+            
+            <div class="inline-flex flex-col md:flex-row items-center gap-4 bg-surface border border-white/10 p-2 rounded-2xl md:rounded-full pl-6 md:pr-2">
+                <span class="text-gray-400 font-mono text-sm">z28922163@gmail.com</span>
+                <button onclick="navigator.clipboard.writeText('z28922163@gmail.com'); alert('邮箱已复制');" class="bg-white text-black px-6 py-3 rounded-xl md:rounded-full font-bold hover:bg-cyan-400 transition-colors text-sm w-full md:w-auto">
+                    复制邮箱
+                </button>
+            </div>
+
+            <div class="mt-12 flex justify-center gap-8 text-gray-500">
+                <a href="https://github.com/black-fruit" class="hover:text-white transition-colors"><i class="fa-brands fa-github text-2xl"></i></a>
+                <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-twitter text-2xl"></i></a>
+                <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-linkedin text-2xl"></i></a>
+            </div>
+            
+            <p class="mt-8 text-xs text-gray-600 font-mono">
+                &copy; 2026 PROTECTS LAB. ALL RIGHTS RESERVED.<br>
+                DESIGNED FOR THE FUTURE.
+            </p>
+        </div>
+    </section>
+
+    <!-- Modal (Modern) -->
+    <div id="serviceModal" class="fixed inset-0 z-[100] hidden" role="dialog">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="relative bg-surface border border-white/10 rounded-2xl max-w-lg w-full p-8 shadow-2xl transform transition-all scale-100">
+                <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+                <h3 class="text-2xl font-bold text-white mb-4" id="modal-title">Service</h3>
+                <div class="text-gray-300 leading-relaxed space-y-4" id="modal-content">
+                    <!-- Content injected by JS -->
+                </div>
+                <div class="mt-8 pt-6 border-t border-white/10">
+                    <a href="mailto:z28922163@gmail.com" class="block w-full text-center bg-white text-black font-bold py-3 rounded-xl hover:bg-cyan-400 transition-colors">
+                        发送邮件询价
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Spotlight Effect Logic
+        const cards = document.querySelectorAll(".spotlight-card");
+        
+        document.getElementById("research").onmousemove = e => {
+            for(const card of cards) {
+                const rect = card.getBoundingClientRect(),
+                      x = e.clientX - rect.left,
+                      y = e.clientY - rect.top;
+
+                card.style.setProperty("--mouse-x", `${x}px`);
+                card.style.setProperty("--mouse-y", `${y}px`);
+            };
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('serviceModal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+
+        function openModal(type) {
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            
+            if(type === 'chemical') {
+                modalTitle.innerText = "高端化学品定制 / Chemical";
+                modalContent.innerHTML = `
+                    <p>我们的化学部门专注于复杂有机分子的合成。如果您需要：</p>
+                    <ul class="list-disc pl-5 space-y-2 mt-2 text-sm text-gray-400">
+                        <li>稀有科研试剂或参照品</li>
+                        <li>药物化学中间体 (毫克至千克级)</li>
+                        <li>手性化合物的不对称合成</li>
+                    </ul>
+                    <p class="mt-4 text-sm">请准备好 CAS 号或结构式，我们将提供具有竞争力的报价和 HPLC/NMR 数据报告。</p>
+                `;
+            } else {
+                modalTitle.innerText = "软件研发 / Software";
+                modalContent.innerHTML = `
+                    <p>护云技术团队提供端到端的软件解决方案：</p>
+                    <ul class="list-disc pl-5 space-y-2 mt-2 text-sm text-gray-400">
+                        <li><strong>Web 开发:</strong> React, Vue, Next.js, Node.js, Go</li>
+                        <li><strong>AI 服务:</strong> LLM 微调, 计算机视觉模型部署, 数据清洗</li>
+                        <li><strong>系统架构:</strong> 高并发服务器, 容器化部署 (Docker/K8s)</li>
+                    </ul>
+                `;
+            }
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+    </script>
+</body>
+</html>
